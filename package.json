@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alex-arriaga/node-js-rest-api.git"
+    "url": "git+https://github.com/shekhasohel/node-js-restful-api-example.git"
   },
   "keywords": [
     "nodejs",
