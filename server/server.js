@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var eventsRouter = require('./routers/events-router');
+var userRouter = require('./routers/user-router');
 
 var app = express();
 var port = 8000;
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
 app.use('/events', eventsRouter);
+app.use('/user', userRouter);
 
 app.listen(port);
 console.log("Running app on port port. Visit: http://localhost:" + port + "/");
