@@ -26,7 +26,8 @@ userRouter.param('id', function (req, res, next, id) {
 });
 
 userRouter.get('/:id', function (req, res) {
-    var user = req.user;
+    var user = Object.assign({}, req.user);
+    delete user.password;
     res.json(user || {});
 });
 
@@ -38,7 +39,7 @@ userRouter.post('/', updateId, function (req, res) {
     users.push(user);
 
     var userData = Object.assign({}, user);
-    userData.password = "";
+    delete userData.password;
     res.status(201).json(userData || {});
 });
 
@@ -55,7 +56,7 @@ userRouter.post('/login', function (req, res) {
         if (!compareHash(req.body.password, userData.password)) {
             res.send();
         } else {
-            userData.password = "";
+            delete userData.password;
             res.json(userData);
         }
     }
@@ -63,19 +64,21 @@ userRouter.post('/login', function (req, res) {
 
 userRouter.put('/:id', function (req, res) {
     var update = req.body;
-
-    if (update.id) {
-        delete update.id;
-    }
-
     var user = _.findIndex(users, {id: req.params.id});
 
     if (!users[user]) {
         res.send();
     } else {
+        if (update.id) {
+            delete update.id;
+        }
+        if (update.email) {
+            delete update.email;
+        }
         update.password = generateHash(update.password)
-        var updatedUser = _.assign(users[user], update);
-        updatedUser.password = "";
+        _.assign(users[user], update);
+        var updatedUser = Object.assign({}, users[user]);
+        delete updatedUser.password;
         res.json(updatedUser);
     }
 });
