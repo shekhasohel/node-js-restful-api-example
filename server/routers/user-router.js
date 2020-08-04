@@ -36,17 +36,29 @@ userRouter.post('/', updateId, function (req, res) {
     user.password = generateHash(user.password)
 
     users.push(user);
-    res.status(201).json(user || {});
+
+    var userData = Object.assign({}, user);
+    userData.password = "";
+    res.status(201).json(userData || {});
 });
 
 userRouter.post('/login', function (req, res) {
-    var user = req.body;
 
-    var passwordHash = generateHash(user.password)
+    var passwordHash = generateHash(req.body.password)
 
-    var user = _.findIndex(users, {email: user.email, password: passwordHash});
-    
-    res.status(201).json(user || {});
+    var user = _.findIndex(users, {'email': req.body.email});
+
+    if (!users[user]) {
+        res.send();
+    } else {
+        var userData = Object.assign({}, users[user]);
+        if (!compareHash(req.body.password, userData.password)) {
+            res.send();
+        } else {
+            userData.password = "";
+            res.json(userData);
+        }
+    }
 });
 
 userRouter.put('/:id', function (req, res) {
@@ -63,6 +75,7 @@ userRouter.put('/:id', function (req, res) {
     } else {
         update.password = generateHash(update.password)
         var updatedUser = _.assign(users[user], update);
+        updatedUser.password = "";
         res.json(updatedUser);
     }
 });
@@ -78,6 +91,10 @@ userRouter.use(function (err, req, res, next) {
 
 function generateHash(password) {
     return bcrypt.hashSync(password, 10);
+}
+
+function compareHash(password, hash) {
+    return bcrypt.compareSync(password, hash)
 }
 
 module.exports = userRouter;
