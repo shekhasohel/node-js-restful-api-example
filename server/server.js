@@ -5,7 +5,7 @@ var eventsRouter = require('./routers/events-router');
 var userRouter = require('./routers/user-router');
 
 var app = express();
-var port = 8000;
+var port = 80;
 
 app.use(morgan('dev'));
 app.use(express.static('client'));
@@ -25,5 +25,5 @@ app.use(bodyParser.json());
 app.use('/events', eventsRouter);
 app.use('/user', userRouter);
 
-app.listen(port);
+app.listen(process.env.PORT || port);
 console.log("Running app on port port. Visit: http://localhost:" + port + "/");
